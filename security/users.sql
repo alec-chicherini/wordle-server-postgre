@@ -1,1 +1,0 @@
-ALTER USER "wordle-server-game" with password 'password';
