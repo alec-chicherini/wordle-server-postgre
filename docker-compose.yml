@@ -7,16 +7,17 @@ secrets:
         external: true
 
 networks:
-  postgres_network:
-    external: true
+  postgres_network_external:
     name: postgres_network
+    external: true
 
 volumes:
   pg_data:
 
 services:
-  db:
+  postgres_db:
     image: wordle-server-postgre-build
+    hostname: postgres-server
     secrets:
       - postgres_admin_password
       - postgres_wordle_server_user_password
@@ -24,20 +25,20 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
       POSTGRES_HOST_AUTH_METHOD: password
+      POSTGRES_PASSWORD: password
       WORDLE_DB_NAME: postgres-db-wordle
       WORDLE_SERVER_USER_NAME: wordle-server-game
       POSTGRES_ADMIN_PASSWORD_FILE: /run/secrets/postgres_admin_password
       POSTGRES_WORDLE_SERVER_USER_PASSWORD_FILE: /run/secrets/postgres_wordle_server_user_password
     networks:
-      postgres_network:
-        ipv4_address: 192.168.0.2
+      - postgres_network_external
     ports:
       - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
-      interval: 10s
-      timeout: 5s
+      interval: 60s
+      timeout: 10s
       retries: 5
-      start_period: 10s
+      start_period: 60s

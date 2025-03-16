@@ -10,7 +10,7 @@ openssl rand -base64 32 | docker secret create postgres_wordle_server_user_passw
 
 postgres network
 ```
-docker network create --scope=swarm --driver=bridge --subnet=192.168.0.0/16 postgres_network
+docker network create --scope=swarm --driver=overlay --internal --attachable postgres_network
 ```
 
 Запустить
@@ -19,8 +19,9 @@ docker build --target=wordle_server_postgre_build . -t wordle-server-postgre-bui
 docker stack deploy --compose-file docker-compose.yml
 ```
 
-Коннект для wordle-server-game
+connect url
 ```
 #export PGPASSWORD=$(cat $POSTGRES_WORDLE_SERVER_USER_PASSWORD_FILE)
-#ENV WORDLE_SERVER_GAME_URL=postgres://wordle-server-game@192.168.0.2:5432/postgres-db-wordle
+#ENV POSTGRES_URL=postgres://postgres@postgres-server:5432/postgres
+#ENV WORDLE_SERVER_GAME_URL=postgres://wordle-server-game@postgres-server:5432/postgres-db-wordle
 ```
